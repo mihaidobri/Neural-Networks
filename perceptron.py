@@ -1,4 +1,4 @@
-#Implement a simple perceptron.
+#Implement a simple perceptron
 import numpy as np
 import matplotlib.pyplot as plt
 
