@@ -54,7 +54,7 @@ class Perceptron(object):
         return self.sgn(X)
 
 
-# program an AND gate
+# program an AND gate.
 X = np.array(([1, 1], [0, 1], [1, 1]))
 # print(X)
 # print(X.shape)
