@@ -4,53 +4,60 @@ import numpy as np
 class Perceptron(object):
     def __init__(self,
                  inputSize = 2,
-                 bias = -1.0,
                  learning_rate = 0.1):
 
         # Define (hyperparameters)
         self.inputSize = inputSize  #number of inputs
-        self.w0 = bias   #threshold (bias)
 
         # Weights (parameters)
         # self.W = np.random.randn(self.inputSize)    #weights matrix defined by size of input
         self.W = np.array((0,0))    #weights matrix defined by size of input
         self.eta = learning_rate                    #learning rate
 
-    #generated predicted output - Forward pass
+    def sigmoid(self, z):
+        # Apply sigmoid activation function to scalar, vector, or matrix
+        return 1 / (1 + np.exp(-z))
+
+    def sigmoidPrime(self, z):
+        # Gradient of sigmoid
+        return np.exp(-z) / ((1 + np.exp(-z)) ** 2)
+
     def predict(self, X):
-        activation  = X.dot(self.W)
-        # print("Activation: ",activation)
-        # thresholded outp®ut
-        return [(1.0 if i + self.w0 >= 0 else 0) for i in activation]
+        # generated predicted output - Forward pass
+        return self.sigmoid(X.dot(self.W))
 
     def train_batch(self, epochs, X, y):
         # Updates weights according to Percptron Rule. Do not use predict
-        print('___')
         for i in range(0,epochs):
-            output = X.dot(self.W)
-            print('\nEpoch: ', i)
-            print("Initial weights: ",self.W)
-            self.W = self.W +self.eta*(y - self.predict(X)).dot(X)
-            print("Updated weights: ",self.W)
-        print("-----")
+            print('\nEpoch %s/%s' % (i + 1, epochs))
+            # print('Input: ', X)
+            print('Predicted: ', self.predict(X))
+            print('%s/%s [==============================] - 0s - loss: %s'
+                  % (i, epochs, sum(y - self.predict(X)) ** 2))
+            # print("\tInitial weights: ", self.W)
+            y_hat = self.predict(X)
+            deltaW = (y - y_hat)* self.sigmoidPrime(y_hat)
+            self.W = self.W + self.eta* deltaW.dot(X)   #dot product sums all examples
+            # # print("\tUpdated weights: ", self.W)
+            print('Predicted: ', self.predict(X))
+            print('Target: ', y)
         return
 
     def train_stochastick(self, epochs, X, y):
-        print('___')
-
         for i in range(0, epochs):
-            print("Epoch: ",i)
             for instance in range(0, X.shape[0]):
-                print('\tInstance: ', instance)
-                print("\t\tinput: ", X[instance,])
-                print("\t\tWeights before: ",self.W)
-                print("\t\tyhat: ",self.predict(X)[instance])
-                print("\t\ty: ",y[instance])
-                output = X[instance].dot(self.W)
-                self.W = self.W + self.eta * (y[instance] - output)*(X[instance,])
-                print('\t\tWeights after: ',self.W)
-                print('\n')
-        print('___')
+                print('\nEpoch %s/%s' % (i+1, epochs))
+                print('Input: ', X[instance])
+                print('Predicted: ', self.predict(X[instance]))
+                print('%s/%s [==============================] - 0s - loss: %s'
+                      % (instance, X.shape[0], (y[instance] - self.predict(X[instance]))**2))
+                # print("\tInitial weights: ", self.W)
+                y_hat = self.predict(X[instance])
+                deltaW = (y[instance] - y_hat)* self.sigmoidPrime(y_hat) * X[instance]
+                self.W = self.W + self.eta * deltaW
+                # print("\tUpdated weights: ", self.W)
+                print('Predicted: ', self.predict(X[instance]))
+                print('Target: ', y[instance])
         return
 
 
@@ -59,13 +66,8 @@ X = np.array(([1, 1], [0, 1], [1, 1], [0, 0], [1, 0]))
 y = np.array(([1, 1, 1, 0, 1]))
 
 perceptron = Perceptron()
-y_hat = perceptron.predict(X)
-print("Predicted: ",y_hat)
-print('\nTarget: ', y)
-perceptron.train_batch(3, X, y)
-y_hat = perceptron.predict(X)
-print("Predicted: ",y_hat)
-print('\nTarget: ', y)
+# perceptron.train_stochastick(1, X, y)
+perceptron.train_batch(2, X, y)
 
 
 
