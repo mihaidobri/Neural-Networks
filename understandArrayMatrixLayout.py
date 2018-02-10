@@ -36,3 +36,19 @@ a = np.array( [[1],[2],[3]] )
 print(a.shape)
 b = np.array( [1,2,3] )
 print(b.shape)
+
+
+import collections
+print("\n\n")
+
+counts = collections.defaultdict(int)
+counts[1] = "here"
+counts[1] = "this"
+
+print(counts)
+
+if counts.keys().__contains__("here"):
+    counts["here"] += 1
+    print("Yes")
+    print(counts)
+    print(counts.get(1))
